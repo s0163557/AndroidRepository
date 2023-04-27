@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="8dp"
+    android:layout_marginTop="8dp"
+    android:layout_marginEnd="8dp"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="16dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/tvElement"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:autoSizeTextType="uniform"
+            android:padding="5dp"
+            android:text="TextView"
+            android:textColor="@color/black"
+            android:textSize="24sp"
+            app:layout_constraintEnd_toStartOf="@+id/constraintButtons"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintButtons"
+            android:layout_width="145dp"
+            android:layout_height="43dp"
+            android:layout_gravity="end"
+            android:layout_margin="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/tvElement"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.035">
+
+            <ImageButton
+                android:id="@+id/ibEdit"
+                android:layout_width="38dp"
+                android:layout_height="29dp"
+                android:layout_marginStart="4dp"
+                android:contentDescription="@string/edit_button_description"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.428"
+                app:srcCompat="@android:drawable/ic_menu_edit" />
+
+            <ImageButton
+                android:id="@+id/ibDelete"
+                android:layout_width="38dp"
+                android:layout_height="29dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginBottom="8dp"
+                android:contentDescription="@string/delete_button_description"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/ibEdit"
+                app:srcCompat="@android:drawable/ic_menu_delete" />
+
+            <ImageButton
+                android:id="@+id/ibOrder"
+                android:layout_width="38dp"
+                android:layout_height="29dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginBottom="8dp"
+                android:contentDescription="@string/delete_button_description"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/ibDelete"
+                app:srcCompat="@android:drawable/ic_menu_send" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.cardview.widget.CardView>
