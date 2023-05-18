@@ -11,8 +11,10 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.annotation.RequiresPermission
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.FragmentTransaction
+import com.example.app2.data.Faculty
 import com.example.app2.data.Student
 import com.example.app2.repository.FacultyRepository
 import com.example.app2.ui.*
@@ -26,6 +28,8 @@ class MainActivity : AppCompatActivity(),
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        FacultyRepository.newInstance()
+        FacultyRepository.get().loadData(this)
         setContentView(R.layout.activity_main)
 
         supportFragmentManager
@@ -44,6 +48,12 @@ class MainActivity : AppCompatActivity(),
                 }
             }
         })
+
+    }
+
+    override fun onStop() {
+        super.onStop()
+        FacultyRepository.get().saveData(this)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -80,13 +90,16 @@ class MainActivity : AppCompatActivity(),
         builder.setPositiveButton(getString(R.string.commit)) { _, _ ->
             val s = nameInput.text.toString()
             val year = yearInput.year
+
             if (year > 2023)
             {
                 Toast.makeText(this, "Год не должен превышать текущий!", Toast.LENGTH_SHORT).show()
             }
             else {
+                val Date = Date(yearInput.year, yearInput.month, yearInput.dayOfMonth)
+                var _faculty = Faculty(s, Date)
                 if (s.isNotBlank() && year != null) {
-                    FacultyRepository.get().newFaculty(s, year)
+                    FacultyRepository.get().newFaculty(_faculty)
                 }
             }
         }

@@ -12,21 +12,67 @@
     tools:context=".ui.StudentFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_width="403dp"
+        android:layout_height="583dp">
+
+        <TimePicker
+            android:id="@+id/tpArrival"
+            android:layout_width="270dp"
+            android:layout_height="106dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:timePickerMode="spinner"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvLastName3" />
+
+        <TextView
+            android:id="@+id/tvLastName3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:fontFamily="monospace"
+            android:text="Время прибытия"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tpDeparture" />
+
+        <TimePicker
+            android:id="@+id/tpDeparture"
+            android:layout_width="270dp"
+            android:layout_height="106dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:timePickerMode="spinner"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvLastName2" />
 
         <TextView
             android:id="@+id/tvLastName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="16dp"
             android:fontFamily="monospace"
             android:text="Цена"
             android:textColor="@color/black"
             android:textSize="18sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/etSeatsNumber" />
+            app:layout_constraintTop_toBottomOf="@+id/etTownName" />
+
+        <TextView
+            android:id="@+id/tvLastName2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:fontFamily="monospace"
+            android:text="Время отправки"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/spDayOfWeek" />
 
         <EditText
             android:id="@+id/etSale"
@@ -38,37 +84,11 @@
             android:ems="10"
             android:fontFamily="monospace"
             android:hint="12250"
-            android:inputType="textPersonName"
+            android:inputType="number"
             android:minHeight="48dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tvLastName" />
-
-        <TextView
-            android:id="@+id/tvCalendar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="10dp"
-            android:fontFamily="monospace"
-            android:text=" Дата отправки"
-            android:textColor="@color/black"
-            android:textSize="18sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/etSale" />
-
-        <TextView
-            android:id="@+id/tvArrivalDate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="10dp"
-            android:fontFamily="monospace"
-            android:text=" Дата прибытия"
-            android:textColor="@color/black"
-            android:textSize="18sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/dtpDepartureCalendar" />
 
         <EditText
             android:id="@+id/etTownName"
@@ -88,72 +108,35 @@
             tools:ignore="DuplicateSpeakableTextCheck" />
 
         <TextView
-            android:id="@+id/tvMiddleName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="10dp"
-            android:fontFamily="monospace"
-            android:text="Количество мест"
-            android:textColor="@color/black"
-            android:textSize="18sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/etTownName" />
-
-        <EditText
-            android:id="@+id/etSeatsNumber"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="16dp"
-            android:ems="10"
-            android:fontFamily="monospace"
-            android:hint="80"
-            android:inputType="textPersonName"
-            android:minHeight="48dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tvMiddleName" />
-
-        <TextView
             android:id="@+id/tvName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:fontFamily="monospace"
-            android:text="Место назначения"
+            android:text="Город прибытия"
             android:textColor="@color/black"
             android:textSize="18sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <DatePicker
-            android:id="@+id/dtpDepartureCalendar"
-            style="@android:style/Widget.DatePicker"
-            android:layout_width="216dp"
-            android:layout_height="111dp"
+        <Spinner
+            android:id="@+id/spPlane"
+            android:layout_width="359dp"
+            android:layout_height="23dp"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:calendarViewShown="false"
-            android:clickable="false"
-            android:spinnersShown="true"
+            android:layout_marginTop="16dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tvCalendar" />
+            app:layout_constraintTop_toBottomOf="@+id/etSale" />
 
-        <DatePicker
-            android:id="@+id/dtpArrivalCalendar"
-            style="@android:style/Widget.DatePicker"
-            android:layout_width="214dp"
-            android:layout_height="101dp"
+        <Spinner
+            android:id="@+id/spDayOfWeek"
+            android:layout_width="360dp"
+            android:layout_height="26dp"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:calendarViewShown="false"
-            android:clickable="false"
-            android:spinnersShown="true"
+            android:layout_marginTop="16dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tvArrivalDate" />
+            app:layout_constraintTop_toBottomOf="@+id/spPlane" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

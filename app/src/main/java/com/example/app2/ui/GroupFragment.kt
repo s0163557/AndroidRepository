@@ -8,7 +8,10 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.DatePicker
+import android.widget.EditText
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.core.graphics.drawable.toDrawable
 import androidx.core.graphics.toColor
 import androidx.fragment.app.FragmentActivity
@@ -19,6 +22,7 @@ import com.example.app2.data.Faculty
 import com.example.app2.data.Student
 import com.example.app2.databinding.FragmentGroupBinding
 import com.example.app2.databinding.LayoutStudentListelementBinding
+import com.example.app2.repository.FacultyRepository
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import java.util.UUID
@@ -61,7 +65,9 @@ class GroupFragment : Fragment() {
         viewModel.setFaculty(_facultyID)
     }
 
+    var Currenttab = TabLayout.Tab()
     var tabPosition = 0
+
     private fun updateUI(faculty: Faculty) {
         binding.tabGroup.clearOnTabSelectedListeners()
         binding.tabGroup.removeAllTabs()
@@ -81,14 +87,15 @@ class GroupFragment : Fragment() {
         binding.tabGroup.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 tabPosition = tab?.position!!
+                Currenttab = tab!!
             }
 
             override fun onTabUnselected(tab: TabLayout.Tab?) {
             }
 
             override fun onTabReselected(tab: TabLayout.Tab?) {
+                Currenttab = tab!!
             }
-
         })
 
         binding.faBtnAddStudent.visibility =
@@ -100,8 +107,49 @@ class GroupFragment : Fragment() {
                 }
                 View.VISIBLE
             }
-    }
 
+        binding.faBtnDelete.visibility =
+            if ((faculty?.groups?.size ?: 0) == 0)
+                View.GONE
+            else {
+                binding.faBtnDelete.setOnClickListener {
+                    var currentGroup = faculty?.groups!!.get(tabPosition)
+                    faculty?.groups!!.remove(currentGroup)
+                    binding.tabGroup.removeTab(Currenttab!!)
+                }
+                View.VISIBLE
+            }
+
+        binding.faBtnEdit.visibility =
+            if ((faculty?.groups?.size ?: 0) == 0)
+                View.GONE
+            else {
+                binding.faBtnEdit.setOnClickListener {
+                    val builder = AlertDialog.Builder(requireContext())
+                    builder.setCancelable(true)
+                    val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.name_input, null)
+                    builder.setView(dialogView)
+                    val nameInput = dialogView.findViewById(R.id.editName) as EditText
+                    var currentGroup = faculty?.groups!!.get(tabPosition)
+                    nameInput.setText(currentGroup.name)
+                    val tvInfo = dialogView.findViewById(R.id.tvInfo) as TextView
+                    builder.setTitle("Укажите значение")
+                    tvInfo.text = getString(R.string.inputGroup)
+                    builder.setPositiveButton(getString(R.string.commit)) { _, _ ->
+                        val s = nameInput.text.toString()
+                        if (s.isNotBlank()) {
+                            var currentGroup = faculty?.groups!!.get(tabPosition)
+                            FacultyRepository.get().editGroup(currentGroup, s)
+                        }
+                    }
+                    builder.setNegativeButton(getString(R.string.cancel), null)
+                    val alert = builder.create()
+                    alert.show()
+                    alert.show()
+                }
+                View.VISIBLE
+            }
+    }
 
     private inner class GroupPageAdapter(fa: FragmentActivity, private val faculty: Faculty) :
         FragmentStateAdapter(fa) {
@@ -131,3 +179,21 @@ class GroupFragment : Fragment() {
         super.onDetach()
     }
 }
+
+/*
+        val dialogView = LayoutInflater.from(context).inflate(R.layout.fragment_group_list, null)
+        var departureDate = dialogView.findViewById(R.id.dtpDepartureCalendar2) as DatePicker
+        val calendar: Calendar = Calendar.getInstance()
+        calendar.setTimeInMillis(System.currentTimeMillis())
+        departureDate.init(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
+            calendar.get(Calendar.DAY_OF_MONTH)
+        ) { datePicker, year, month, dayOfMonth ->
+            Toast.makeText(context, "Дата изменилась!", Toast.LENGTH_SHORT).show()
+            binding.rvGroupList.layoutManager = LinearLayoutManager(
+                context,
+                LinearLayoutManager.VERTICAL, false
+            )
+            binding.rvGroupList.adapter = GroupListAdapter(group.students ?: emptyList())
+            viewModel = ViewModelProvider(this).get(GroupListViewModel::class.java)
+        }
+ */

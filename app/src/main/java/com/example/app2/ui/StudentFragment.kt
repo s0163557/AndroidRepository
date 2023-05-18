@@ -8,12 +8,14 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import android.widget.DatePicker
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import com.example.app2.R
 import com.example.app2.data.Student
 import com.example.app2.databinding.FragmentStudentBinding
+import java.time.DayOfWeek
 import java.util.*
 
 const val STUDENT_TAG = "StudentFragment"
@@ -41,27 +43,37 @@ class StudentFragment private constructor() : Fragment() {
         return binding.root
     }
 
-//    private var selectedDate: Date = Date()
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+    val daysOfWeek = listOf("Понедельник", "Вторник", "Среда", "Четверг",
+        "Пятница", "Суббота", "Воскресенье")
+    val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, daysOfWeek)
+    binding.spDayOfWeek.adapter = adapter
+    val PlaneList = listOf(
+        "Airbus A319" ,
+        "Airbus A320",
+        "Airbus A321"
+    )
+    val adapter2 = ArrayAdapter<String>(requireContext(),
+        android.R.layout.simple_spinner_dropdown_item, PlaneList)
+    binding.spPlane.adapter = adapter2
+    binding.tpDeparture.setIs24HourView(true)
+    binding.tpArrival.setIs24HourView(true)
         if (student != null) {
-            binding.etTownName.setText(student?.townName)
-            binding.etSeatsNumber.setText(student?.seatsNumber.toString()!!)
-            binding.etSale.setText(student?.sale.toString()!!)
-            val departureDate = GregorianCalendar().apply {
-                time = student!!.departureDate
-            }
-            val arrivalDate = GregorianCalendar().apply {
-                time = student!!.arrivalDate
-            }
-            binding.dtpDepartureCalendar.init(departureDate.get(Calendar.YEAR), departureDate.get(Calendar.MONTH),
-                departureDate.get(Calendar.DAY_OF_MONTH), null)
-            binding.dtpArrivalCalendar.init(arrivalDate.get(Calendar.YEAR), arrivalDate.get(Calendar.MONTH),
-                arrivalDate.get(Calendar.DAY_OF_MONTH), null)
+            binding.etTownName.setText(student?.ArrivalCity)
+            binding.etSale.setText(student?.Sale.toString()!!)
+            binding.spDayOfWeek.setSelection(adapter.getPosition(student!!.DayOfWeek.toString()))
+            binding.spPlane.setSelection(adapter2.getPosition(student!!.NameOfPlane))
+            binding.tpArrival.hour = student!!.Arrivalhour
+            binding.tpArrival.minute = student!!.ArrivalMinute
+            binding.tpDeparture.hour = student!!.DepartureJour
+            binding.tpDeparture.minute = student!!.DepartureMinute
         }
 
-        viewModel = ViewModelProvider(this).get(StudentViewModel::class.java)
+    viewModel = ViewModelProvider(this).get(StudentViewModel::class.java)
     }
+
     val backPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
             showCommitDialog()
@@ -72,7 +84,6 @@ class StudentFragment private constructor() : Fragment() {
         super.onAttach(context)
         requireActivity().onBackPressedDispatcher.addCallback(this, backPressedCallback)
     }
-
 
     private fun showCommitDialog() {
         val builder = AlertDialog.Builder(requireActivity())
@@ -85,69 +96,46 @@ class StudentFragment private constructor() : Fragment() {
                 p = false
                 binding.etTownName.error = "Укажите значение"
             }
-            binding.etSeatsNumber.text.toString().ifBlank {
-                p = false
-                binding.etSeatsNumber.error = "Укажите значение"
-            }
             binding.etSale.text.toString().ifBlank {
                 p = false
                 binding.etSale.error = "Укажите значение"
             }
 
-            if (binding.etSeatsNumber.text.toString().toIntOrNull() ==null)
-            {
-                p = false
-                binding.etSeatsNumber.error = "Значение должно быть числовым!"
-            }
-            if (binding.etSale.text.toString().toIntOrNull() == null)
-            {
-                p = false
-                binding.etSale.error = "Значение должно быть числовым!"
-            }
-
-            val selectedDepartureDate = GregorianCalendar().apply {
-                set(GregorianCalendar.YEAR, binding.dtpDepartureCalendar.year)
-                set(GregorianCalendar.MONTH, binding.dtpDepartureCalendar.month)
-                set(GregorianCalendar.DAY_OF_MONTH, binding.dtpDepartureCalendar.dayOfMonth)
-            }
-
-            val selectedArrivalDate = GregorianCalendar().apply {
-                set(GregorianCalendar.YEAR, binding.dtpArrivalCalendar.year)
-                set(GregorianCalendar.MONTH, binding.dtpArrivalCalendar.month)
-                set(GregorianCalendar.DAY_OF_MONTH, binding.dtpArrivalCalendar.dayOfMonth)
-            }
-
-            if (selectedDepartureDate.after(selectedArrivalDate))
-            {
-                p = false
-                Toast.makeText(context, "Дата отправки не может быть позже даты прибытия!", Toast.LENGTH_SHORT).show()
-            }
-
             if(p) {
+
+                val dayOfWeekMap = mapOf(
+                    "Понедельник" to DayOfWeek.MONDAY,
+                    "Вторник" to DayOfWeek.TUESDAY,
+                    "Среда" to DayOfWeek.WEDNESDAY,
+                    "Четверг" to DayOfWeek.THURSDAY,
+                    "Пятница" to DayOfWeek.FRIDAY,
+                    "Суббота" to DayOfWeek.SATURDAY,
+                    "Воскресенье" to DayOfWeek.SUNDAY
+                )
 
                 if (student == null) {
                     student = Student()
                     student?.apply {
-                        townName = binding.etTownName.text.toString()
-                        seatsNumber = binding.etSeatsNumber.text.toString().toInt()
-                        sale = binding.etSale.text.toString().toInt()
-                        departureDate = selectedDepartureDate.time
-                        arrivalDate = selectedArrivalDate.time
-                        for(i in 1..seatsNumber) {
-                            occupiedSeats?.add(false)
-                        }
+                        ArrivalCity = binding.etTownName.text.toString()
+                        NameOfPlane = binding.spPlane.selectedItem.toString()
+                        Sale = binding.etSale.text.toString().toInt()
+                        DepartureJour = binding.tpDeparture.hour
+                        DepartureMinute = binding.tpDeparture.minute
+                        Arrivalhour = binding.tpArrival.hour
+                        ArrivalMinute = binding.tpArrival.minute
+                        DayOfWeek = dayOfWeekMap[binding.spDayOfWeek.selectedItem.toString()]!!
                     }
                     viewModel.newStudent(groupID!!, student!!)
                 } else {
                     student?.apply {
-                        townName = binding.etTownName.text.toString()
-                        seatsNumber = binding.etSeatsNumber.text.toString().toInt()
-                        sale = binding.etSale.text.toString().toInt()
-                        departureDate = selectedDepartureDate.time
-                        arrivalDate = selectedArrivalDate.time
-                        for(i in 1..seatsNumber){
-                            occupiedSeats?.add(false)
-                        }
+                        ArrivalCity = binding.etTownName.text.toString()
+                        NameOfPlane = binding.spPlane.selectedItem.toString()
+                        Sale = binding.etSale.text.toString().toInt()
+                        DepartureJour = binding.tpDeparture.hour
+                        DepartureMinute = binding.tpDeparture.minute
+                        Arrivalhour = binding.tpArrival.hour
+                        ArrivalMinute = binding.tpArrival.minute
+                       DayOfWeek = dayOfWeekMap[binding.spDayOfWeek.selectedItem.toString()]!!
                     }
                     viewModel.editStudent(groupID!!, student!!)
                 }
