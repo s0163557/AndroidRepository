@@ -6,6 +6,9 @@ import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.DatePicker
@@ -14,6 +17,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.core.graphics.drawable.toDrawable
 import androidx.core.graphics.toColor
+import androidx.core.view.size
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.adapter.FragmentStateAdapter
@@ -33,6 +37,65 @@ class GroupFragment : Fragment() {
     private var _binding: FragmentGroupBinding? = null
     private val binding get() = _binding!!
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.second_menu, menu);
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    private var CurrentFaculty : Faculty = Faculty()
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.myEditFacultyGroup -> {
+                if (binding.tabGroup.tabCount != 0) {
+                    val builder = AlertDialog.Builder(requireContext())
+                    builder.setCancelable(true)
+                    val dialogView =
+                        LayoutInflater.from(requireContext()).inflate(R.layout.name_input, null)
+                    builder.setView(dialogView)
+                    val nameInput = dialogView.findViewById(R.id.editName) as EditText
+                    var currentGroup = CurrentFaculty?.groups!!.get(tabPosition)
+                    nameInput.setText(currentGroup.name)
+                    val tvInfo = dialogView.findViewById(R.id.tvInfo) as TextView
+                    builder.setTitle("Укажите значение")
+                    tvInfo.text = getString(R.string.inputGroup)
+                    builder.setPositiveButton(getString(R.string.commit)) { _, _ ->
+                        val s = nameInput.text.toString()
+                        if (s.isNotBlank()) {
+                            var currentGroup = CurrentFaculty?.groups!!.get(tabPosition)
+                            FacultyRepository.get().editGroup(currentGroup, s)
+                        }
+                    }
+                    builder.setNegativeButton(getString(R.string.cancel), null)
+                    val alert = builder.create()
+                    alert.show()
+                }
+                true
+            }
+            R.id.myDeleteFacultyGroup -> {
+                if (binding.tabGroup.tabCount != 0) {
+                    if (binding.tabGroup.tabCount != 1) {
+                        var currentGroup = CurrentFaculty?.groups!!.get(tabPosition)
+                        CurrentFaculty?.groups!!.remove(currentGroup)
+                        binding.tabGroup.removeTab(Currenttab!!)
+                    } else {
+                        var currentGroup = CurrentFaculty?.groups!!.get(tabPosition)
+                        CurrentFaculty?.groups!!.remove(currentGroup)
+                        binding.tabGroup.removeAllTabs()
+                        binding.vpGroup.adapter?.notifyDataSetChanged()
+                        binding.faBtnAddStudent.visibility = View.GONE
+                    }
+                }
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
 
     companion object {
         private lateinit var _facultyID: UUID
@@ -71,6 +134,7 @@ class GroupFragment : Fragment() {
     private fun updateUI(faculty: Faculty) {
         binding.tabGroup.clearOnTabSelectedListeners()
         binding.tabGroup.removeAllTabs()
+        CurrentFaculty = faculty
 
         for (i in 0 until (faculty?.groups?.size ?: 0)) {
             binding.tabGroup.addTab(binding.tabGroup.newTab().apply {
@@ -108,7 +172,8 @@ class GroupFragment : Fragment() {
                 View.VISIBLE
             }
 
-        binding.faBtnDelete.visibility =
+        binding.faBtnDelete.visibility = View.GONE
+        /*
             if ((faculty?.groups?.size ?: 0) == 0)
                 View.GONE
             else {
@@ -119,8 +184,9 @@ class GroupFragment : Fragment() {
                 }
                 View.VISIBLE
             }
-
-        binding.faBtnEdit.visibility =
+*/
+        binding.faBtnEdit.visibility =View.GONE
+        /*
             if ((faculty?.groups?.size ?: 0) == 0)
                 View.GONE
             else {
@@ -149,6 +215,7 @@ class GroupFragment : Fragment() {
                 }
                 View.VISIBLE
             }
+            */
     }
 
     private inner class GroupPageAdapter(fa: FragmentActivity, private val faculty: Faculty) :

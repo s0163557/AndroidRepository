@@ -112,7 +112,7 @@ class GroupListFragment(private val group: Group) : Fragment() {
                 spDate.adapter = adapter1
 
                 val seatButton = dialogView.findViewById<Button>(R.id.selectSeatBtn)
-
+                seatButton.visibility = View.INVISIBLE
                 seatButton.setOnClickListener{
 
                     var currentPlane = student.planes.find {
@@ -133,9 +133,29 @@ class GroupListFragment(private val group: Group) : Fragment() {
                         FacultyRepository.get().addSeats(currentPlane)
                         student.planes += currentPlane
                     }
-                    selectSeatDialog(currentPlane!!)
+                    callbacks?.showSeats(currentPlane)
+                   // selectSeatDialog(currentPlane!!)
                 }
-                builder.setPositiveButton(getString(R.string.commit)) { _, _ ->
+                builder.setPositiveButton("Выбрать место") { _, _ ->
+                    var currentPlane = student.planes.find {
+                        it.name == student.NameOfPlane &&
+                                it.date == spDate.selectedItem.toString()
+                    }
+
+                    if (currentPlane == null) {
+                        val planeTypes = arrayOf("Airbus A319", "Airbus A320", "Airbus A321")
+                        val selectedPlaneTypeIndex = planeTypes.indexOf(student.NameOfPlane)
+                        val planeTypeRows = arrayOf(4, 5, 6)[selectedPlaneTypeIndex]
+                        currentPlane = Plane(
+                            name = student.NameOfPlane,
+                            date = spDate.selectedItem.toString(),
+                            amRows = planeTypeRows,
+                            amCols = 5
+                        )
+                        FacultyRepository.get().addSeats(currentPlane!!)
+                        student.planes += currentPlane!!
+                    }
+                    callbacks?.showSeats(currentPlane)
                 }
                 builder.setNegativeButton(getString(R.string.cancel), null)
                 val alert = builder.create()
@@ -280,6 +300,7 @@ class GroupListFragment(private val group: Group) : Fragment() {
 
     interface Callbacks {
         fun showStudent(groupID: UUID, _student: Student?)
+        fun showSeats(_plane : Plane?)
     }
 
     var callbacks: Callbacks? = null

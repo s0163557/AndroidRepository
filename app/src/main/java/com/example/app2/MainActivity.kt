@@ -15,6 +15,7 @@ import androidx.annotation.RequiresPermission
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.FragmentTransaction
 import com.example.app2.data.Faculty
+import com.example.app2.data.Plane
 import com.example.app2.data.Student
 import com.example.app2.repository.FacultyRepository
 import com.example.app2.ui.*
@@ -145,6 +146,15 @@ class MainActivity : AppCompatActivity(),
         supportFragmentManager
             .beginTransaction()
             .replace(R.id.frameMain, GroupFragment.newInstance(facultyID), GROUP_TAG)
+            .addToBackStack(null)
+            .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+            .commit()
+    }
+
+    override fun showSeats(_plane : Plane?) {
+        supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.frameMain, SeatsFragment.newInstance(_plane), _plane!!.name)
             .addToBackStack(null)
             .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
             .commit()

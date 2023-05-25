@@ -8,7 +8,6 @@ import com.example.app2.repository.FacultyRepository
 import java.util.*
 
 class FacultyViewModel : ViewModel() {
-    // TODO: Implement the ViewModel
     var university : MutableLiveData<List<Faculty>> = MutableLiveData()
 
     init {
